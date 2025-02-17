@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compra Direta</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="header">
+        <img src="img/logo.png" alt="Logo da Prefeitura">
+        <h1>Prefeitura de Agudos</h1>
+        <h2>Documento de Formalização de Demanda</h2>
+    </div>
+
+    <form id="compraDiretaForm">
+        <div class="form-group">
+            <label for="setor">Setor Solicitante</label>
+            <select id="setor" name="setor">
+                <option>Secretaria de Administração e Finanças</option>
+                <option>Secretaria de Agricultura</option>
+                <option>Secretaria de Assistência Social e Cidadania</option>
+                <option>Secretaria de Educação e Cultura</option>
+                <option>Secretaria de Esporte e Lazer</option>
+                <option>Secretaria de Planejamento Urbano e Meio Ambiente</option>
+                <option>Secretaria de Obras e Infraestrutura</option>
+                <option>Secretaria de Saúde</option>
+                <option>Secretaria de Serviços Urbanos e Mobilidade</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="tipo_solicitacao">Tipo de Solicitação</label>
+            <select id="tipo_solicitacao" name="tipo_solicitacao">
+                <option value="material">Material</option>
+                <option value="servico">Serviço</option>
+                <option value="obra">Obra</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="valor_estimado">Valor Estimado</label>
+            <input type="text" id="valor_estimado" name="valor_estimado" placeholder="R$ 0,00">
+        </div>
+
+        <div class="form-group">
+            <label for="numero_processo">Nº do Processo Licitatório</label>
+            <input type="text" id="numero_processo" name="numero_processo">
+        </div>
+
+        <div class="form-group">
+            <label for="numero_pregao">Nº do Pregão</label>
+            <input type="text" id="numero_pregao" name="numero_pregao">
+        </div>
+
+        <div class="form-group">
+            <label for="numero_contrato">Nº do Contrato</label>
+            <input type="text" id="numero_contrato" name="numero_contrato">
+        </div>
+
+        <div class="form-group">
+            <label for="forma_pagamento">Forma de Pagamento</label>
+            <input type="text" id="forma_pagamento" name="forma_pagamento">
+        </div>
+
+        <div class="form-group">
+            <label for="prazo_execucao">Prazo de Execução</label>
+            <input type="text" id="prazo_execucao" name="prazo_execucao">
+        </div>
+
+        <div class="form-group">
+            <label for="ficha">Fonte nº das Fichas</label>
+            <input type="text" id="ficha" name="ficha">
+        </div>
+
+        <div class="form-group">
+            <label for="aplicacao">Número da Aplicação</label>
+            <input type="text" id="aplicacao" name="aplicacao">
+        </div>
+
+        <!-- Campos para as três empresas participantes -->
+        <h3>Empresas Participantes</h3>
+        <div class="empresa-group">
+            <div class="form-group">
+                <label for="empresa1">Empresa 1</label>
+                <input type="text" id="empresa1" name="empresa1">
+            </div>
+            <div class="form-group">
+                <label for="cnpj1">CNPJ</label>
+                <input type="text" id="cnpj1" name="cnpj1" placeholder="00.000.000/0000-00">
+            </div>
+        </div>
+        <div class="empresa-group">
+            <div class="form-group">
+                <label for="empresa2">Empresa 2</label>
+                <input type="text" id="empresa2" name="empresa2">
+            </div>
+            <div class="form-group">
+                <label for="cnpj2">CNPJ</label>
+                <input type="text" id="cnpj2" name="cnpj2" placeholder="00.000.000/0000-00">
+            </div>
+        </div>
+        <div class="empresa-group">
+            <div class="form-group">
+                <label for="empresa3">Empresa 3</label>
+                <input type="text" id="empresa3" name="empresa3">
+            </div>
+            <div class="form-group">
+                <label for="cnpj3">CNPJ</label>
+                <input type="text" id="cnpj3" name="cnpj3" placeholder="00.000.000/0000-00">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="justificativa">Justificativa</label>
+            <textarea id="justificativa" name="justificativa" rows="4"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Itens e Orçamentos</label>
+            <table id="tabela-itens" class="tabela-dinamica">
+                <thead>
+                    <tr>
+                        <th rowspan="2">Nº</th>
+                        <th rowspan="2">Descrição</th>
+                        <th rowspan="2">Qtd</th>
+                        <th rowspan="2">Unid.</th>
+                        <th colspan="2" id="colEmpresa1">Empresa 1</th>
+                        <th colspan="2" id="colEmpresa2">Empresa 2</th>
+                        <th colspan="2" id="colEmpresa3">Empresa 3</th>
+                        <th rowspan="2">Menor Preço</th>
+                    </tr>
+                    <tr>
+                        <th>Valor Unit.</th>
+                        <th>Valor Total</th>
+                        <th>Valor Unit.</th>
+                        <th>Valor Total</th>
+                        <th>Valor Unit.</th>
+                        <th>Valor Total</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <button type="button" id="adicionar-linhas">Adicionar Linha</button>
+            <button type="button" id="excluir-linhas">Excluir Linhas Selecionadas</button>
+        </div>
+
+        <button type="button" id="btn-gerar-pdf">Baixar PDF</button>
+    </form>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="js/gerarpdf.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
