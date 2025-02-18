@@ -115,6 +115,14 @@
             <label for="justificativa">Justificativa</label>
             <textarea id="justificativa" name="justificativa" rows="4"></textarea>
         </div>
+
+        <script>
+            function atualizarCabecalhoEmpresas() {
+                document.getElementById("colEmpresa1").textContent = document.getElementById("empresa1").value || "Empresa 1";
+                document.getElementById("colEmpresa2").textContent = document.getElementById("empresa2").value || "Empresa 2";
+                document.getElementById("colEmpresa3").textContent = document.getElementById("empresa3").value || "Empresa 3";
+            }
+        </script>
         <div class="form-group">
             <label>Itens e Orçamentos</label>
             <table id="tabela-itens" class="tabela-dinamica">
@@ -127,7 +135,6 @@
                         <th colspan="2" id="colEmpresa1">Empresa 1</th>
                         <th colspan="2" id="colEmpresa2">Empresa 2</th>
                         <th colspan="2" id="colEmpresa3">Empresa 3</th>
-                        <th rowspan="2">Menor Preço</th>
                     </tr>
                     <tr>
                         <th>Valor Unit.</th>
@@ -140,9 +147,22 @@
                 </thead>
                 <tbody></tbody>
             </table>
-            <button type="button" id="adicionar-linhas">Adicionar Linha</button>
-            <button type="button" id="excluir-linhas">Excluir Linhas Selecionadas</button>
-        </div>
+            <input type="number" id="quantidade-linhas" placeholder="Qtd" min="1" style="width: 50px; margin-right: 10px;">
+<button type="button" id="adicionar-linhas" onclick="adicionarLinhas()">Adicionar Linhas</button>
+
+<button type="button" id="excluir-linhas" onclick="excluirLinhas()">Excluir Linhas Selecionadas</button>
+
+</div>
+
+<div class="form-group">
+    <label for="secretario">Secretário(a)</label>
+    <input type="text" id="secretario" name="secretario" readonly>
+</div>
+
+<div class="form-group">
+    <label for="despacho">Despacho do Prefeito</label>
+    <textarea id="despacho" rows="4" readonly></textarea>
+</div>
 
         <button type="button" id="btn-gerar-pdf">Baixar PDF</button>
     </form>
