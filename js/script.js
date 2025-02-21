@@ -19,41 +19,74 @@ document.addEventListener("DOMContentLoaded", function () {
         input.value = "R$ " + value.replace(".", ",");
     }
 
-    function adicionarLinha() {
+    function adicionarLinhas() {
+        const quantidadeInput = document.getElementById("quantidade-linhas");
+        const quantidade = parseInt(quantidadeInput.value) || 1;
+        quantidadeInput.value = ""; // Limpa o campo após adicionar
+    
         const tabela = document.getElementById("tabela-itens").getElementsByTagName("tbody")[0];
-        const novaLinha = tabela.insertRow();
-        const numLinhas = tabela.rows.length;
-
-        const colunas = [
-            numLinhas,
-            "<input type='text' class='descricao' />",
-            "<input type='number' class='quantidade' />",
-            "<input type='text' class='unidade' />",
-            "<input type='text' class='valor-unitario empresa1' />",
-            "<input type='text' class='total empresa1-total' readonly />",
-            "<input type='text' class='valor-unitario empresa2' />",
-            "<input type='text' class='total empresa2-total' readonly />",
-            "<input type='text' class='valor-unitario empresa3' />",
-            "<input type='text' class='total empresa3-total' readonly />"
-        ];
-
-        colunas.forEach((coluna, index) => {
-            const cell = novaLinha.insertCell(index);
-            cell.innerHTML = coluna;
-        });
-
-        novaLinha.querySelectorAll(".valor-unitario").forEach(input => {
-            input.addEventListener("input", function () {
-                aplicarMascaraDinheiro(this);
-                calcularMenorPreco(novaLinha);
+    
+        for (let i = 0; i < quantidade; i++) {
+            const novaLinha = tabela.insertRow();
+            const numLinhas = tabela.rows.length;
+    
+            const colunas = [
+                `<span class='numero'>${numLinhas}</span>`,
+                `<input type='text' class='descricao' />`,
+                `<input type='number' class='quantidade' />`,
+                `<input type='text' class='unidade' />`,
+                `<input type='text' class='valor-unitario empresa1' />`,
+                `<input type='text' class='total empresa1-total' readonly />`,
+                `<input type='text' class='valor-unitario empresa2' />`,
+                `<input type='text' class='total empresa2-total' readonly />`,
+                `<input type='text' class='valor-unitario empresa3' />`,
+                `<input type='text' class='total empresa3-total' readonly />`,
+                `<input type='checkbox' class='linha-checkbox' />`
+            ];
+    
+            colunas.forEach((coluna, index) => {
+                const cell = novaLinha.insertCell(index);
+                cell.innerHTML = coluna;
             });
+    
+            // Adiciona eventos manualmente após inserir os inputs na linha
+            novaLinha.querySelector(".quantidade").addEventListener("input", function () {
+                calcularTotal(this);
+            });
+    
+            novaLinha.querySelectorAll(".valor-unitario").forEach(input => {
+                input.addEventListener("input", function () {
+                    aplicarMascaraDinheiro(this);
+                    calcularTotal(this);
+                });
+            });
+        }
+    }
+    
+
+    function excluirLinhas() {
+        document.querySelectorAll("#tabela-itens tbody tr .linha-checkbox:checked").forEach(input => {
+            input.closest("tr").remove();
+        });
+        atualizarNumeracao();
+    }
+
+    function atualizarNumeracao() {
+        document.querySelectorAll("#tabela-itens tbody tr").forEach((linha, index) => {
+            linha.querySelector(".numero").textContent = index + 1;
         });
     }
 
-    function excluirLinhas() {
-        document.querySelectorAll("#tabela-itens tbody tr input:checked").forEach(input => {
-            input.closest("tr").remove();
+    function calcularTotal(elemento) {
+        const linha = elemento.closest("tr");
+        const quantidade = parseFloat(linha.querySelector(".quantidade").value) || 0;
+        linha.querySelectorAll(".valor-unitario").forEach((input, index) => {
+            let valorUnitario = parseFloat(input.value.replace("R$ ", "").replace(",", ".")) || 0;
+            let total = quantidade * valorUnitario;
+            linha.querySelectorAll(".total")[index].value = "R$ " + total.toFixed(2).replace(".", ",");
         });
+        calcularMenorPreco(linha);
+        calcularValorEstimado(); // <-- Adiciona a chamada aqui
     }
 
     function calcularMenorPreco(linha) {
@@ -68,7 +101,12 @@ document.addEventListener("DOMContentLoaded", function () {
             input.parentNode.style.backgroundColor = (parseFloat(input.value.replace("R$ ", "").replace(",", ".")) === menorValor) ? "#d4edda" : "";
         });
     }
+  
+    document.getElementById("adicionar-linhas").addEventListener("click", adicionarLinhas);
+    document.getElementById("excluir-linhas").addEventListener("click", excluirLinhas);
+});
 
+document.addEventListener("DOMContentLoaded", function () {
     function atualizarSecretario() {
         const secretarios = {
             "Secretaria de Administração e Finanças": "Thiago Portapila Gomes",
@@ -85,7 +123,26 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("secretario").value = secretarios[document.getElementById("setor").value] || "";
     }
 
+    atualizarSecretario(); // Garante que o nome do secretário seja preenchido ao carregar
+
     document.getElementById("setor").addEventListener("change", atualizarSecretario);
-    document.getElementById("adicionar-linhas").addEventListener("click", adicionarLinha);
-    document.getElementById("excluir-linhas").addEventListener("click", excluirLinhas);
 });
+
+function calcularValorEstimado() {
+    let totalEstimado = 0;
+
+    document.querySelectorAll("#tabela-itens tbody tr").forEach(linha => {
+        const valores = [
+            parseFloat(linha.querySelector(".empresa1").value.replace("R$ ", "").replace(",", ".")) || Infinity,
+            parseFloat(linha.querySelector(".empresa2").value.replace("R$ ", "").replace(",", ".")) || Infinity,
+            parseFloat(linha.querySelector(".empresa3").value.replace("R$ ", "").replace(",", ".")) || Infinity
+        ];
+
+        const menorValor = Math.min(...valores);
+        const quantidade = parseFloat(linha.querySelector(".quantidade").value) || 0;
+        totalEstimado += menorValor * quantidade;
+    });
+
+    // Atualiza o campo de valor estimado na interface
+    document.getElementById("valor-estimado").value = "R$ " + totalEstimado.toFixed(2).replace(".", ",");
+}
