@@ -146,3 +146,66 @@ function calcularValorEstimado() {
     // Atualiza o campo de valor estimado na interface
     document.getElementById("valor-estimado").value = "R$ " + totalEstimado.toFixed(2).replace(".", ",");
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    function gerarDespacho() {
+        const empresa1 = document.getElementById("empresa1").value.trim() || "Empresa 1";
+        const empresa2 = document.getElementById("empresa2").value.trim() || "Empresa 2";
+        const empresa3 = document.getElementById("empresa3").value.trim() || "Empresa 3";
+        const tipoSolicitacao = document.getElementById("tipo_solicitacao").value.toLowerCase();
+        const tipoFinal = (tipoSolicitacao === "material") ? "aquisição" : "contratação";
+
+        let fornecedores = {};
+        let totalItens = 0;
+
+        document.querySelectorAll("#tabela-itens tbody tr").forEach((linha, index) => {
+            const numItem = index + 1;
+            const valores = [
+                { fornecedor: empresa1, valor: parseFloat(linha.querySelector(".empresa1").value.replace("R$ ", "").replace(",", ".")) || Infinity },
+                { fornecedor: empresa2, valor: parseFloat(linha.querySelector(".empresa2").value.replace("R$ ", "").replace(",", ".")) || Infinity },
+                { fornecedor: empresa3, valor: parseFloat(linha.querySelector(".empresa3").value.replace("R$ ", "").replace(",", ".")) || Infinity }
+            ];
+
+            const menorFornecedor = valores.reduce((prev, curr) => (curr.valor < prev.valor ? curr : prev)).fornecedor;
+
+            if (!fornecedores[menorFornecedor]) {
+                fornecedores[menorFornecedor] = [];
+            }
+            fornecedores[menorFornecedor].push(numItem);
+            totalItens++;
+        });
+
+        let despacho = "";
+
+        if (totalItens === 1) {
+            // Se houver apenas 1 item, usa a versão singular do texto
+            let fornecedorUnico = Object.keys(fornecedores)[0];
+            despacho = `Autorizo a ${tipoFinal} do ${tipoSolicitacao} abaixo para o fornecedor ${fornecedorUnico} com dispensa de licitação de acordo com Art. 75, inciso II da Lei 14.133/2021.`;
+        } else {
+            // Para múltiplos itens, separa corretamente singular e plural
+            despacho = `Autorizo a ${tipoFinal} do ${tipoSolicitacao} abaixo conforme: `;
+
+            let itensFormatados = [];
+            for (let fornecedor in fornecedores) {
+                let itens = fornecedores[fornecedor];
+
+                let textoItens = (itens.length === 1)
+                    ? `Item nº ${itens[0]}`
+                    : `Itens nº ${itens.join(", ")}`;
+
+                itensFormatados.push(`${textoItens} para o fornecedor ${fornecedor}`);
+            }
+
+            despacho += itensFormatados.join("; ") + " com dispensa de licitação de acordo com Art. 75, inciso II da Lei 14.133/2021.";
+        }
+
+        document.getElementById("despacho").textContent = despacho;
+    }
+
+    // Atualiza o despacho sempre que houver mudança na tabela ou nos campos das empresas
+    document.getElementById("tabela-itens").addEventListener("input", gerarDespacho);
+    document.getElementById("empresa1").addEventListener("input", gerarDespacho);
+    document.getElementById("empresa2").addEventListener("input", gerarDespacho);
+    document.getElementById("empresa3").addEventListener("input", gerarDespacho);
+});
+
