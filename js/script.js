@@ -180,10 +180,10 @@ document.addEventListener("DOMContentLoaded", function () {
         if (totalItens === 1) {
             // Se houver apenas 1 item, usa a versão singular do texto
             let fornecedorUnico = Object.keys(fornecedores)[0];
-            despacho = `Autorizo a ${tipoFinal} do ${tipoSolicitacao} abaixo para o fornecedor ${fornecedorUnico} com dispensa de licitação de acordo com Art. 75, inciso II da Lei 14.133/2021.`;
+            despacho = `Autorizo a ${tipoFinal} do ${tipoSolicitacao} para o fornecedor ${fornecedorUnico} com dispensa de licitação de acordo com Art. 75, inciso II da Lei 14.133/2021.`;
         } else {
             // Para múltiplos itens, separa corretamente singular e plural
-            despacho = `Autorizo a ${tipoFinal} do ${tipoSolicitacao} abaixo conforme: `;
+            despacho = `Autorizo a ${tipoFinal} do ${tipoSolicitacao} conforme: `;
 
             let itensFormatados = [];
             for (let fornecedor in fornecedores) {
@@ -208,4 +208,3 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("empresa2").addEventListener("input", gerarDespacho);
     document.getElementById("empresa3").addEventListener("input", gerarDespacho);
 });
-
